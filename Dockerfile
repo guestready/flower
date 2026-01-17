@@ -3,9 +3,14 @@ FROM python:alpine
 # Get latest root certificates
 RUN apk add --no-cache ca-certificates tzdata && update-ca-certificates
 
-# Install the required packages
-RUN pip install --no-cache-dir redis flower
+# Copy local flower source
+COPY requirements/ /src/requirements/
+COPY flower/ /src/flower/
+COPY setup.py setup.cfg README.rst /src/
 
+# Install the required packages
+RUN pip install --no-cache-dir redis
+RUN pip install --no-cache-dir /src
 # PYTHONUNBUFFERED: Force stdin, stdout and stderr to be totally unbuffered. (equivalent to `python -u`)
 # PYTHONHASHSEED: Enable hash randomization (equivalent to `python -R`)
 # PYTHONDONTWRITEBYTECODE: Do not write byte files to disk, since we maintain it as readonly. (equivalent to `python -B`)
